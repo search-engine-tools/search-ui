@@ -1,0 +1,220 @@
+<html>
+<head>
+  <title>Image Search</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js" integrity="sha512-ubuT8Z88WxezgSqf3RLuNi5lmjstiJcyezx34yIU2gAHonIi27Na7atqzUZCOoY4CExaoFumzOsFQ2Ch+I/HCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js" integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.3.1/image-picker.js" integrity="sha512-g9ZuEtt4yVKDEXQwtRW2M8grDQViZHaiCiq3GtyZaj7gLc9f2SWRcjY+Y9KQX6IB+tp1UpibOHwmtbnGeFjTUw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css"
+        integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css"
+        integrity="sha512-+0Vhbu8sRUlg+R/NKgTv7ahM+szPDF10G6J5PcHb1tOrAaquZIUiKUV3TH16mi6fuH4NjvHqlok6ppBhR6Nxuw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.3.1/image-picker.css"
+        integrity="sha512-SMXf5+HiyBHQjtjM3hqAZi0+H8KLyeOEA+gPBKqfOkgbuGTIsb0/sgT7jWQRsBt20TvnoUqM3cDbrIhv6gIiSg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  <script type="text/javascript" src="qrels.json"></script>
+</head>
+<body>
+<div class="mx-auto p-2">
+  <nav>
+    <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+         aria-controls="nav-home" aria-selected="true">Search</a>
+      <a class="nav-item nav-link" id="nav-evaluate-tab" data-toggle="tab" href="#nav-evaluate" role="tab"
+         aria-controls="nav-evaluate" aria-selected="false">Evaluate</a>
+    </div>
+  </nav>
+  <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <div class="input-group mx-auto p-2 col-auto w-50 ui-widget">
+        <input type="text" class="form-control" placeholder="endpoint" id="endpointInput">
+        <div class="input-group-append">
+          <button type="button" class="btn btn-outline-secondary" onclick="loadResponseImages()">🔎</button>
+          <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" onclick="loadImagesFromFile('r1.json')">#1</a>
+            <a class="dropdown-item" onclick="loadImagesFromFile('r2.json')">#2</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="nav-evaluate" role="tabpanel" aria-labelledby="nav-evaluate-tab">
+      <div class="input-group mx-auto p-2 col-auto w-50 ui-widget">
+        <input type="text" class="form-control" placeholder="query" id="queryInput">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" onclick="loadQueryImages()">🔎</button>
+          <button class="btn btn-outline-secondary" type="button" onclick="exportImages()">📝</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="warningModelLabel">WARNING</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="warningBody"></div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="pickerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pickerModalLabel">DOCUMENTS</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="response"></div>
+      <div class="modal-body" id="pickerBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="copyToClipboard()">Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div id="gallery" class="row"></div>
+  <select id="selectGallery" multiple="multiple" class="image-picker show-html"></select>
+</div>
+<textarea id=copy name="hide" style="display:none;"></textarea>
+</body>
+<script>
+  $("#requestForm").submit(function (e) {
+    e.preventDefault();
+  });
+  $("select").imagepicker();
+  var query = "";
+  var queryDict = {}
+  var queries = [];
+  var qrel = "";
+  defineQueryImages("./qrels.json");
+  $("#queryInput").autocomplete({source: queries});
+
+  function defineQueryImages(resultPath) {
+    $.getJSON(resultPath, function (json) {
+      $.each(json, function (index, element) {
+        queries.push(element.query);
+        queryDict[element.query] = element.docs;
+      });
+    });
+  }
+
+  function handleException(msg) {
+    $("#warningBody").html(msg);
+    var warningModal = new bootstrap.Modal(document.getElementById('warningModal'), {keyboard: true});
+    warningModal.show();
+  }
+
+  function loadImagesFromFile(jsonPath) {
+    $('#gallery').empty();
+    $.getJSON(jsonPath, function (json) {
+      var imgList = "";
+      $.each(json, function () {
+        imgList += '<div class="col-md-3 col-6"><img class="img-thumbnail img-fluid" src="' + this.source + '"></div>';
+      });
+      $('#gallery').append(imgList);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  function loadImages(jsonData) {
+    $('#gallery').empty();
+    $('#selectGallery').empty();
+    var imgList = "";
+    $.each(jsonData, function () {
+      imgList += '<div class="col-md-3 col-6"><img class="img-thumbnail img-fluid" src="' + this.source + '"></div>';
+    });
+    if (imgList === "") {
+      handleException('Invalid response or image not found!');
+    }
+    $('#gallery').append(imgList);
+    window.scrollTo(0, 0);
+  }
+
+  function loadSelectImages(query) {
+    $('#gallery').empty();
+    $('#selectGallery').empty();
+    var docs = queryDict[query];
+    if (docs) {
+      var queryImages = "";
+      var i = 1;
+      $.each(docs, function () {
+        queryImages += '<option data-img-class="col-6" data-img-src="' + this.source + '" value="' + i
+            + '">img</option>';
+        i++;
+      });
+    } else {
+      handleException('Image not found!');
+    }
+    $('#selectGallery').append(queryImages);
+    $("select").imagepicker();
+    window.scrollTo(0, 0);
+  }
+
+  function loadResponseImages() {
+    var endpoint = $('#endpointInput').val();
+    if (endpoint) {
+      $.ajax({
+        url: endpoint, type: 'GET', dataType: 'json', timeout: 100000, async: false,
+        headers: {Accept: "application/json", "Access-Control-Allow-Origin": "*"},
+        success: function (data, status, xhr) {
+          loadImages(data);
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+          handleException('Error: ' + errorMessage);
+        }
+      });
+    } else {
+      handleException('Endpoint is empty!');
+    }
+  }
+
+  function loadQueryImages() {
+    query = $('#queryInput').val();
+    if (query) {
+      loadSelectImages(query);
+    } else {
+      handleException('Query is empty!');
+    }
+  }
+
+  function exportImages() {
+    var picked = $("select").data('picker');
+    var pickedDocs = picked.selected_values();
+    qrel = '{ "query" : "' + query + '", "docs" : [' + pickedDocs + '] }';
+    $("#pickerBody").html(qrel);
+    var pickerModal = new bootstrap.Modal(document.getElementById('pickerModal'), {keyboard: true});
+    pickerModal.show();
+  }
+
+  function copyToClipboard() {
+    navigator.clipboard.writeText(qrel).then(function () {
+      $("#response").animate({height: '+=72px'}, 300);
+      $('<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Copied!</div>').hide().appendTo(
+          '#response').fadeIn(1000);
+      $(".alert").delay(2000).fadeOut("normal", function () {
+        $(this).remove();
+      });
+      $("#response").delay(4000).animate({height: '-=72px'}, 300);
+    }, function () {
+      console.log("Error!");
+    });
+  }
+</script>
+</html>

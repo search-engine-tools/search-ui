@@ -17,6 +17,18 @@
         integrity="sha512-SMXf5+HiyBHQjtjM3hqAZi0+H8KLyeOEA+gPBKqfOkgbuGTIsb0/sgT7jWQRsBt20TvnoUqM3cDbrIhv6gIiSg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"/>
   <script type="text/javascript" src="qrels.json"></script>
+  <style>
+    .thumbnail {
+      width: 200px  !important;
+      height: 200px  !important;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .thumbnail img{
+      max-width: 90% !important;
+      max-height: 90% !important;
+    }
+  </style>
 </head>
 <body>
 <div class="mx-auto p-2">
@@ -155,8 +167,7 @@
       var queryImages = "";
       var i = 1;
       $.each(docs, function () {
-        queryImages += '<option data-img-class="col-6" data-img-src="' + this.source + '" value="' + i
-            + '">img</option>';
+        queryImages += '<option data-img-src="' + this.source + '" value="' + i + '">img</option>';
         i++;
       });
     } else {

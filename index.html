@@ -65,6 +65,16 @@
           <button class="btn btn-outline-secondary" type="button" onclick="exportImages()">📝</button>
         </div>
       </div>
+      <div class="input-group mx-auto p-2 col-auto w-50 ui-widget">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect">Which type of images have you selected?</label>
+        </div>
+        <select class="custom-select custom-select-my" id="inputGroupSelect">
+          <option value="0" selected>Choose...</option>
+          <option value="Relevant">Relevant</option>
+          <option value="Irrelevant">Irrelevant</option>
+        </select>
+      </div>
     </div>
   </div>
 </div>
@@ -110,7 +120,7 @@
   $("#requestForm").submit(function (e) {
     e.preventDefault();
   });
-  $("select").imagepicker();
+  $("#selectGallery").imagepicker();
   var query = "";
   var queryDict = {}
   var queries = [];
@@ -174,7 +184,7 @@
       handleException('Image not found!');
     }
     $('#selectGallery').append(queryImages);
-    $("select").imagepicker();
+    $("#selectGallery").imagepicker();
     window.scrollTo(0, 0);
   }
 
@@ -206,19 +216,26 @@
   }
 
   function exportImages() {
-    var picked = $("select").data('picker');
-    var pickedDocs = picked.selected_values();
-    qrel = '{ "query" : "' + query + '", "docs" : [' + pickedDocs + '] }';
-    $("#pickerBody").html(qrel);
-    var pickerModal = new bootstrap.Modal(document.getElementById('pickerModal'), {keyboard: true});
-    pickerModal.show();
+    var imageType = $('#inputGroupSelect').val();
+    console.log("ImageType: " + imageType);
+    if(imageType!=0){
+      var picked = $("#selectGallery").data('picker');
+      var pickedDocs = picked.selected_values();
+      qrel = '{ "query" : "' + query + '", "docs" : [' + pickedDocs + '], "imageType"  : "' + imageType + '"}';
+      $("#pickerBody").html(qrel);
+      var pickerModal = new bootstrap.Modal(document.getElementById('pickerModal'), {keyboard: true});
+      pickerModal.show();
+    }else{
+      handleException('Please choose an Image Type: Relevant or Irrelevant');
+    }
+
   }
 
   function copyToClipboard() {
     navigator.clipboard.writeText(qrel).then(function () {
       $("#response").animate({height: '+=72px'}, 300);
       $('<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Copied!</div>').hide().appendTo(
-          '#response').fadeIn(1000);
+              '#response').fadeIn(1000);
       $(".alert").delay(2000).fadeOut("normal", function () {
         $(this).remove();
       });

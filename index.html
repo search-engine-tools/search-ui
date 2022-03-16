@@ -129,6 +129,13 @@
   defineQueryImages("./qrels.json");
   $("#queryInput").autocomplete({source: queries});
 
+  $('#queryInput').on('keypress', function (e) {
+    if(e.which === 13){
+      loadQueryImages();
+      $("#queryInput").autocomplete("close");
+    }
+  });
+
   function defineQueryImages(resultPath) {
     $.getJSON(resultPath, function (json) {
       $.each(json, function (index, element) {

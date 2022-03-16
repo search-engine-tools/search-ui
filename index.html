@@ -73,6 +73,7 @@
           <option value="0" selected>Choose...</option>
           <option value="Relevant">Relevant</option>
           <option value="Irrelevant">Irrelevant</option>
+          <option value="NotFound">NotFound</option>
         </select>
       </div>
     </div>
@@ -226,9 +227,8 @@
       var pickerModal = new bootstrap.Modal(document.getElementById('pickerModal'), {keyboard: true});
       pickerModal.show();
     }else{
-      handleException('Please choose an Image Type: Relevant or Irrelevant');
+      handleException('Please choose an Image Type: Relevant / Irrelevant / NotFound');
     }
-
   }
 
   function copyToClipboard() {

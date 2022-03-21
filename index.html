@@ -16,17 +16,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.3.1/image-picker.css"
         integrity="sha512-SMXf5+HiyBHQjtjM3hqAZi0+H8KLyeOEA+gPBKqfOkgbuGTIsb0/sgT7jWQRsBt20TvnoUqM3cDbrIhv6gIiSg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"/>
-  <script type="text/javascript" src="qrels.json"></script>
+  <script type="text/javascript" src="qrels_cleaned.json"></script>
   <style>
     .thumbnail {
-      width: 200px  !important;
-      height: 200px  !important;
+      width: 260px  !important;
+      height: 260px  !important;
       text-align: center;
       vertical-align: middle;
     }
     .thumbnail img{
-      max-width: 90% !important;
-      max-height: 90% !important;
+      max-width: 99% !important;
+      max-height: 99% !important;
+    }
+    .container-lg {
+      max-width: 99% !important;
     }
   </style>
 </head>
@@ -65,17 +68,6 @@
           <button class="btn btn-outline-secondary" type="button" onclick="exportImages()">📝</button>
         </div>
       </div>
-      <div class="input-group mx-auto p-2 col-auto w-50 ui-widget">
-        <div class="input-group-prepend">
-          <label class="input-group-text" for="inputGroupSelect">Which type of images have you selected?</label>
-        </div>
-        <select class="custom-select custom-select-my" id="inputGroupSelect">
-          <option value="0" selected>Choose...</option>
-          <option value="Relevant">Relevant</option>
-          <option value="Irrelevant">Irrelevant</option>
-          <option value="NotFound">NotFound</option>
-        </select>
-      </div>
     </div>
   </div>
 </div>
@@ -106,12 +98,13 @@
       <div id="response"></div>
       <div class="modal-body" id="pickerBody"></div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="copyToClipboard()">Copy</button>
+        <button type="button" class="btn btn-success" onclick="copyToClipboard('relevant')">Relevant</button>
+        <button type="button" class="btn btn-danger" onclick="copyToClipboard('irrelevant')">Irrelevant</button>
       </div>
     </div>
   </div>
 </div>
-<div class="container">
+<div class="container-lg">
   <div id="gallery" class="row"></div>
   <select id="selectGallery" multiple="multiple" class="image-picker show-html"></select>
 </div>
@@ -126,7 +119,7 @@
   var queryDict = {}
   var queries = [];
   var qrel = "";
-  defineQueryImages("./qrels.json");
+  defineQueryImages("./qrels_cleaned.json");
   $("#queryInput").autocomplete({source: queries});
 
   $('#queryInput').on('keypress', function (e) {
@@ -224,21 +217,24 @@
   }
 
   function exportImages() {
-    var imageType = $('#inputGroupSelect').val();
-    console.log("ImageType: " + imageType);
-    if(imageType!=0){
-      var picked = $("#selectGallery").data('picker');
-      var pickedDocs = picked.selected_values();
-      qrel = '{ "query" : "' + query + '", "docs" : [' + pickedDocs + '], "imageType"  : "' + imageType + '"}';
+
+    var picked = $("#selectGallery").data('picker');
+    var pickedDocs = picked.selected_values();
+    if(pickedDocs.length > 0 ){
+      qrel = '{ "query" : "' + query + '", "docs" : [' + pickedDocs + ']}';
       $("#pickerBody").html(qrel);
       var pickerModal = new bootstrap.Modal(document.getElementById('pickerModal'), {keyboard: true});
       pickerModal.show();
     }else{
-      handleException('Please choose an Image Type: Relevant / Irrelevant / NotFound');
+      handleException('Please choose one image at least');
     }
+
   }
 
-  function copyToClipboard() {
+  function copyToClipboard(imageType) {
+    var picked = $("#selectGallery").data('picker');
+    var pickedDocs = picked.selected_values();
+    qrel = '{ "query" : "' + query + '", "docs" : [' + pickedDocs + '], "imageType"  : "' + imageType + '"}';
     navigator.clipboard.writeText(qrel).then(function () {
       $("#response").animate({height: '+=72px'}, 300);
       $('<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Copied!</div>').hide().appendTo(
@@ -251,5 +247,6 @@
       console.log("Error!");
     });
   }
+
 </script>
 </html>

@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.3.1/image-picker.css"
         integrity="sha512-SMXf5+HiyBHQjtjM3hqAZi0+H8KLyeOEA+gPBKqfOkgbuGTIsb0/sgT7jWQRsBt20TvnoUqM3cDbrIhv6gIiSg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"/>
-  <script type="text/javascript" src="qrels_cleaned.json"></script>
+  <script type="text/javascript" src="qrels_final_query_list.json"></script>
   <style>
     .thumbnail {
       width: 260px  !important;
@@ -119,7 +119,7 @@
   var queryDict = {}
   var queries = [];
   var qrel = "";
-  defineQueryImages("./qrels_cleaned.json");
+  defineQueryImages("./qrels_final_query_list.json");
   $("#queryInput").autocomplete({source: queries});
 
   $('#queryInput').on('keypress', function (e) {

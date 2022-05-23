@@ -26,6 +26,16 @@
         .container-lg {
             max-width: 99% !important;
         }
+
+        .btn-separator:after {
+            content: ' ';
+            display: block;
+            float: left;
+            background: #ADADAD;
+            margin: 0 10px;
+            height: 34px;
+            width: 1px;
+        }
     </style>
 </head>
 <body>
@@ -77,7 +87,7 @@
     </div>
 </div>
 <div class="modal fade" id="pickerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="pickerModalLabel">DOCUMENTS</h5>
@@ -89,8 +99,10 @@
             <div class="modal-body" id="pickerBody"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" onclick="copyToClipboard('master')">Master</button>
-                <button type="button" class="btn btn-success" onclick="copyToClipboard('relevant')">Relevant</button>
+                <span class="btn-separator"></span>
                 <button type="button" class="btn btn-danger" onclick="copyToClipboard('irrelevant')">Irrelevant</button>
+                <button type="button" class="btn btn-warning" onclick="copyToClipboard('somewhat-relevant')">Somewhat Relevant</button>
+                <button type="button" class="btn btn-success" onclick="copyToClipboard('relevant')">Relevant</button>
             </div>
         </div>
     </div>

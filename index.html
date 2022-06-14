@@ -26,7 +26,8 @@
         .thumbnail p {
             max-height: 12% !important;
             background-color: bisque;
-            display: none}
+            display: none
+        }
 
         .container-lg {
             max-width: 99% !important;
@@ -188,29 +189,28 @@
             var i = 1;
             var currCluster = -1;
             $.each(docs, function () {
-                if(this.cluster != null && currCluster != this.cluster){
-                    queryImages += '<option data-img-label="MasterCount: '+ Number(this.masterCount).toFixed(0)  +
-                        ' || Size: '+Number(this.size).toFixed(2)+
-                        ' <br> AvgIndx: '+Number(this.avgIndex).toFixed(2)+
+                if (this.cluster != null && currCluster != this.cluster) {
+                    queryImages += '<option data-img-label="MasterCount: ' + Number(this.masterCount).toFixed(0) +
+                        ' || Size: ' + Number(this.size).toFixed(2) +
+                        ' <br> AvgIndex: ' + Number(this.avgIndex).toFixed(2) +
                         ' || Variance: ' + Number(this.variance).toFixed(2) + '" ' +
-                        'data-img-src="https://dummyimage.com/230X200/000/fff.jpg&text=+CLUSTER - '+ this.cluster+ '" value="CLSTR '+ this.cluster+ '">img</option>';
+                        'data-img-src="https://dummyimage.com/230X200/000/fff.jpg&text=+CLUSTER - ' +
+                        this.cluster + '" value="CLSTR ' + this.cluster + '">img</option>';
                     currCluster = this.cluster;
                 }
-                queryImages += '<option data-img-label="MD: '+ Number(this.masterDistance).toFixed(1)  +
-                    ' || <b>'+this.lang.toUpperCase()+
-                    '</b> || Rank: '+this.rank+
-                    ' <br> Clstr: '+this.cluster+
-                    ' || Score: ' + Number(this.score).toFixed(1) + '" ' +
-                    'data-img-src="' + this.src + '" value="' + i + '" >img</option>';
+                queryImages += '<option data-img-label=' +
+                    '"#' + this.rank + ' || ' + this.lang.toUpperCase().substring(0,2) +
+                    ' || MD: ' + Number(this.mDistance).toFixed(2) + ' || MS: ' + Number(this.mSimilarity).toFixed(2) +
+                    '<br> Clstr: ' + this.cluster + ' || Score: ' + Number(this.score).toFixed(2) +
+                    '"data-img-src="' + this.src + '" value="' + i + '" >img</option>';
                 i++;
-
             });
         } else {
             handleException('Image not found!');
         }
         $('#selectGallery').append(queryImages);
         $('#selectGallery').imagepicker({
-            show_label  : true
+            show_label: true
         });
         window.scrollTo(0, 0);
     }
@@ -258,7 +258,6 @@
     function copyToClipboard(imageLabel) {
         var picked = $('#selectGallery').data('picker');
         var pickedDocs = filterClusterImages(picked.selected_values());
-
         var alrt = '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Copied!</div>'
         qrel = '{"query": "' + query + '", "docs": [' + pickedDocs + '], "label": "' + imageLabel + '"}';
         navigator.clipboard.writeText(qrel).then(function () {
@@ -273,21 +272,21 @@
         });
     }
 
-    function filterClusterImages (pickedDocs){
+    function filterClusterImages(pickedDocs) {
         var removeMe = "CLSTR";
         return pickedDocs.filter(s => !s.startsWith(removeMe));
     }
 
     var hintsVisible = false;
+
     function showHints() {
-        if(!hintsVisible){
+        if (!hintsVisible) {
             $('.thumbnail p').show();
             hintsVisible = true;
-        }else{
+        } else {
             $('.thumbnail p').hide();
             hintsVisible = false;
         }
-
     }
 </script>
 </html>
